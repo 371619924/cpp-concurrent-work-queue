@@ -9,77 +9,77 @@ template <class T>
 class WorkQueue
 {
 private:
-    std::queue<T> data;       // 存储数据的队列
-    std::mutex lock;          // 用于同步的互斥锁
-    std::condition_variable notify;  // 用于通知的条件变量
+    std::queue<T> data;       // Queue to store the data
+    std::mutex lock;          // Mutex for synchronization
+    std::condition_variable notify;  // Condition variable for notification
 
 public:
-    // 默认构造函数
+    // Default constructor
     WorkQueue() = default;
 
-    // 移动构造函数
+    // Move constructor
     WorkQueue(WorkQueue&& other) noexcept
     {
-        std::lock_guard<std::mutex> guard(other.lock);  // 锁定源队列的互斥锁，确保数据安全转移
-        data = std::move(other.data);  // 移动队列的数据
+        std::lock_guard<std::mutex> guard(other.lock);  // Lock the source queue's mutex to ensure safe data transfer
+        data = std::move(other.data);  // Move the data from the source queue
     }
 
-    // 移动赋值操作符
+    // Move assignment operator
     WorkQueue& operator=(WorkQueue&& other) noexcept
     {
-        if (this != &other)  // 防止自赋值
+        if (this != &other)  // Prevent self-assignment
         {
-            std::lock_guard<std::mutex> guard(other.lock);  // 锁定源队列的互斥锁，确保数据安全转移
-            data = std::move(other.data);  // 移动队列的数据
+            std::lock_guard<std::mutex> guard(other.lock);  // Lock the source queue's mutex to ensure safe data transfer
+            data = std::move(other.data);  // Move the data from the source queue
         }
         return *this;
     }
 
-    // 复制构造函数
+    // Copy constructor
     WorkQueue( WorkQueue& other)
     {
-        std::lock_guard<std::mutex> guard(other.lock);  // 锁定源队列的互斥锁，确保数据安全复制
-        data = other.data;  // 执行深度复制
+        std::lock_guard<std::mutex> guard(other.lock);  // Lock the source queue's mutex to ensure safe data copying
+        data = other.data;  // Perform deep copy of the data
     }
 
-    // 复制赋值操作符
+    // Copy assignment operator
     WorkQueue& operator=( WorkQueue& other)
     {
-        if (this != &other)  // 防止自赋值
+        if (this != &other)  // Prevent self-assignment
         {
-            std::lock_guard<std::mutex> guard(other.lock);  // 锁定源队列的互斥锁，确保数据安全复制
-            data = other.data;  // 执行深度复制
+            std::lock_guard<std::mutex> guard(other.lock);  // Lock the source queue's mutex to ensure safe data copying
+            data = other.data;  // Perform deep copy of the data
         }
         return *this;
     }
 
-    // 向队列中添加元素
+    // Add an element to the queue
     void put(T& element)
     {
         bool wasempty = false;
         {
-            std::unique_lock<std::mutex>l(lock);
+            std::unique_lock<std::mutex> l(lock);
             wasempty = data.empty();
-            data.push(element);
+            data.push(element);  // Push the element into the queue
         }
         if (wasempty)
-            notify.notify_all();
+            notify.notify_all();  // Notify all waiting threads that the queue is no longer empty
     }
 
-    // 从队列中获取元素
+    // Get an element from the queue
     T get()
     {
-        std::unique_lock<std::mutex>l(lock);
-        while (data.empty())
+        std::unique_lock<std::mutex> l(lock);
+        while (data.empty())  // Wait until the queue is not empty
         {
             notify.wait(l);
         }
-        auto ret = data.front();
-        data.pop();
-        return ret;
+        auto ret = data.front();  // Get the front element
+        data.pop();  // Remove the front element
+        return ret;  // Return the element
     }
 
-    // 析构函数（如果没有特别的清理需求，可以默认使用）
+    // Destructor 
     ~WorkQueue() = default;
 };
 
