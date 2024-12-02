@@ -58,7 +58,7 @@ public:
     {
         bool wasempty = false;
         {
-            std::unique_lock l(lock);
+            std::unique_lock<std::mutex>l(lock);
             wasempty = data.empty();
             data.push(element);
         }
@@ -69,7 +69,7 @@ public:
     // 从队列中获取元素
     T get()
     {
-        std::unique_lock l(lock);
+        std::unique_lock<std::mutex>l(lock);
         while (data.empty())
         {
             notify.wait(l);
