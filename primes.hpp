@@ -6,8 +6,7 @@
 #include <iterator>
 #include <climits>
 #include <iostream>
-
-
+#include <cmath>
 
 class Primes
 {
@@ -15,14 +14,24 @@ class Primes
 
     static bool isprime(long long value)
     {
-        (void) value;
-        std::cout << "IMPLEMENT ME!\n";
-        return false;
+        if (value <= 1)
+            return false; // 1及以下的数不是质数
+        for (int i = 2; i <= std::sqrt(value); i++)
+        {
+            if (value % i == 0)
+                return false; // 如果能被i整除，则不是质数
+        }
+        return true;
     }
 
     static void calculate_next_prime()
     {
-        std::cout << "IMPLEMENT ME!\n";  
+        long long candidate = allprimes.back() + 1;
+        while (!isprime(candidate)) // Keep checking until we find the next prime
+        {
+            candidate++;
+        }
+        allprimes.push_back(candidate); // Add the found prime to the list
     }
 
     size_t index;
@@ -39,7 +48,7 @@ public:
     Primes(int i = 0) : index(i) {}
 
     // Copy constructor copies the index
-    Primes(const Primes &p) : index(p.index){}
+    Primes(const Primes &p) : index(p.index) {}
 
     Primes &operator++()
     {
@@ -76,8 +85,11 @@ public:
 
     long long operator*() const
     {
-        std::cout << "IMPLEMENT ME!\n";  
-        return 0;
+        while (index >= allprimes.size())
+        {
+            calculate_next_prime();
+        }
+        return allprimes[index];
     }
 
     // Iterator traits:
@@ -89,7 +101,6 @@ public:
     {
         return Primes(INT_MAX);
     }
-
 };
 
 static_assert(std::bidirectional_iterator<Primes>);
