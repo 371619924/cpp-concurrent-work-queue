@@ -36,14 +36,14 @@ public:
     }
 
     // 复制构造函数
-    WorkQueue(const WorkQueue& other)
+    WorkQueue( WorkQueue& other)
     {
         std::lock_guard<std::mutex> guard(other.lock);  // 锁定源队列的互斥锁，确保数据安全复制
         data = other.data;  // 执行深度复制
     }
 
     // 复制赋值操作符
-    WorkQueue& operator=(const WorkQueue& other)
+    WorkQueue& operator=( WorkQueue& other)
     {
         if (this != &other)  // 防止自赋值
         {
