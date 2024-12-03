@@ -7,23 +7,12 @@
 #include <algorithm>
 #include <random>
 
-// Median-of-three pivot selection
-template <class T>
-int medianOfThree(std::vector<T>& vin, int& start, int& end) {
-    int mid = start + (end - start) / 2; // Calculate the middle index
-    if (vin[start] > vin[mid]) std::swap(vin[start], vin[mid]); // Ensure vin[start] <= vin[mid]
-    if (vin[start] > vin[end]) std::swap(vin[start], vin[end]); // Ensure vin[start] <= vin[end]
-    if (vin[mid] > vin[end]) std::swap(vin[mid], vin[end]);     // Ensure vin[mid] <= vin[end]
-    return mid; // Return the index of the median value
-}
-
-
 template <class T>
 int partition(std::vector<T>& vin, int start, int end) {
     if (vin[start] == vin[end]) {
         return (start + end) / 2; // Handle arrays where all elements are identical
     }
-    int pivotIndex = medianOfThree(vin, start, end); // Select pivot using median-of-three
+    int pivotIndex = start + rand() % (end - start + 1); //Choose random pivot instead
     T pivot = vin[pivotIndex];
     std::swap(vin[pivotIndex], vin[end]); // Move pivot to the end
 
