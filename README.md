@@ -1,5 +1,5 @@
-# C-Template
-Template for C programming for ECS 36C at Davis
+# C++ Concurrent Work Queue
 
-This consists of a simple Hello World program and a trivial Makefile
-with debugging turned on.
+A work queue using mutexes and condition variables, alongside quicksort and prime-number exercises.
+
+Course project built from the ECS 36C starter template at UC Davis.
